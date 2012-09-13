@@ -52,7 +52,7 @@ int circy = 1900;
 int tribase = 1600;
 int triheight = 2000;
 int triy= 2000;
-int angle = 90;
+int angle = 70;
 
 void drawCone() {
   canvas.beginDraw();
@@ -74,8 +74,11 @@ void drawCone() {
   canvas.ellipse(canvas.width/2, circy, middiam, middiam);
   
   // small ellipse
+  float rad = middiam/2 + smalldiam/2;
+  //smalldiam = (int) ((bigdiam - middiam)*cos(radians(angle)));
+  smalldiam = map(smalldiam, 0, (bigdiam - middiam)
   canvas.fill(255);
-  canvas.ellipse(canvas.width/2, circy - middiam/2 - smalldiam/2, smalldiam, smalldiam);
+  canvas.ellipse(canvas.width/2 + rad*cos(radians(angle)), circy - rad*sin(radians(angle)), smalldiam, smalldiam);
   
   // cone
   fill(0);
@@ -94,11 +97,11 @@ void keyPressed() {
     println(circy);
     break;
    case LEFT:
-    angle --;
+    angle += 2;
     println(angle);
     break;
   case RIGHT:
-    angle++;
+    angle -= 2;
     println(angle);
     break;
   case 32:
