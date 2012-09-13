@@ -76,7 +76,7 @@ void drawCone() {
   // small ellipse
   float rad = middiam/2 + smalldiam/2;
   //smalldiam = (int) ((bigdiam - middiam)*cos(radians(angle)));
-  smalldiam = map(angle, 0, 90, 0, (bigdiam - middiam));
+  smalldiam = map(angle, 0, 90, 0, (bigdiam - middiam)); //asdf
   canvas.fill(255);
   canvas.ellipse(canvas.width/2 + rad*cos(radians(angle)), circy - rad*sin(radians(angle)), smalldiam, smalldiam);
   
