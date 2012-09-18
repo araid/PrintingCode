@@ -15,7 +15,6 @@ float ratio = 1;
 void setup()
 { 
   size(800, 600);
-  background(128);
 
   canvas = createGraphics(canvas_width, canvas_height, P2D);
   calculateResizeRatio();
@@ -23,10 +22,16 @@ void setup()
   noLoop();
 }
 
-void draw() {
+void draw() {  
+  background(128);
+ 
   float resizedWidth = (float) canvas.width * ratio;
   float resizedHeight = (float) canvas.height * ratio;
   image(canvas, (width / 2) - (resizedWidth / 2), (height / 2) - (resizedHeight / 2), resizedWidth, resizedHeight);
+
+  String s = "Play with arrows.\nSave with space\nShow strokes with S.";
+  fill(50);
+  text(s, 10, 10, 150, 150);
 }
 
 /*  Calculate resizing
@@ -44,44 +49,54 @@ void calculateResizeRatio()
 
 /* Design 
  ----------------------------------------------------------------- */
-int bigdiam = 1500;
+int bigdiam = 1935;
 int middiam = 1350;
-int smalldiam = 150;
-
 int circy = 1900;
 int tribase = 1600;
 int triheight = 2000;
 int triy= 2000;
-int angle = 70;
+int angle = 95;
+boolean bShowStrokes = false;
 
 void drawCone() {
   canvas.beginDraw();
-
   canvas.background(255);
 
-  canvas.noStroke();
-  canvas.stroke(255,0,0);
-  canvas.strokeWeight(10);
-  
+  if ( bShowStrokes ) {
+    canvas.stroke(255, 0, 0); // for debugging
+    canvas.strokeWeight(10);
+  }
+  else {
+    canvas.noStroke();
+  }
+
   // big ellipse
-  canvas.fill(100);
+  canvas.fill(0);
   canvas.ellipse(canvas.width/2 + (bigdiam - middiam)/2, circy, bigdiam, bigdiam);
-  
+
   // rectangle to hide big ellipse
-  
+  canvas.fill(255);
+  canvas.pushMatrix();
+  canvas.translate(canvas.width/2, circy);
+  canvas.rotate(radians(-angle));
+  canvas.rect(-canvas.width/2, 0, canvas.width, canvas.height/2);
+  canvas.popMatrix();
+
   // middle ellipse
-  canvas.fill(0,120);
+  canvas.fill(0);
   canvas.ellipse(canvas.width/2, circy, middiam, middiam);
-  
+
   // small ellipse
+  //I can't find the exact function to map the growth of the diameter in one ellipse to the other
+  //float smalldiam = ((bigdiam - middiam)*cos(radians(angle)));
+  int d = (int) (map(angle, 180, 0, 0, (bigdiam - middiam)));
+  int smalldiam = (int) (d*d);
   float rad = middiam/2 + smalldiam/2;
-  //smalldiam = (int) ((bigdiam - middiam)*cos(radians(angle)));
-  smalldiam = map(angle, 0, 90, 0, (bigdiam - middiam)); //asdf
   canvas.fill(255);
   canvas.ellipse(canvas.width/2 + rad*cos(radians(angle)), circy - rad*sin(radians(angle)), smalldiam, smalldiam);
-  
+
   // cone
-  fill(0);
+  canvas.fill(0);
   canvas.triangle(canvas.width/2 - tribase/2, triy, canvas.width/2 + tribase/2, triy, canvas.width/2, triy + triheight);
   canvas.endDraw();
 }
@@ -89,14 +104,14 @@ void drawCone() {
 void keyPressed() {
   switch(keyCode) {
   case UP:
-    circy -= 20;
-    println(circy);
+    bigdiam += 15;
+    println(bigdiam);
     break;
   case DOWN:
-    circy += 20;
-    println(circy);
+    bigdiam -= 15;
+    println(bigdiam);
     break;
-   case LEFT:
+  case LEFT:
     angle += 2;
     println(angle);
     break;
@@ -104,11 +119,15 @@ void keyPressed() {
     angle -= 2;
     println(angle);
     break;
-  case 32:
+  }
+  if ( key == 's' ) {
+    bShowStrokes = !bShowStrokes;
+  }
+  else if ( key == ' ' ) {
     canvas.save("grab"+month()+day()+minute()+second()+".png");
     println("frame saved");
-    break;
   }
+
   drawCone();
   redraw();
 }
