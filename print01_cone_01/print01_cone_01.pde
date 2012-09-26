@@ -89,8 +89,7 @@ void drawCone() {
   // small ellipse
   //I can't find the exact function to map the growth of the diameter in one ellipse to the other
   //float smalldiam = ((bigdiam - middiam)*cos(radians(angle)));
-  int d = (int) (map(angle, 180, 0, 0, (bigdiam - middiam)));
-  int smalldiam = (int) (d*d);
+  float smalldiam = map(angle, 180, 0, 0, (bigdiam - middiam));
   float rad = middiam/2 + smalldiam/2;
   canvas.fill(255);
   canvas.ellipse(canvas.width/2 + rad*cos(radians(angle)), circy - rad*sin(radians(angle)), smalldiam, smalldiam);
