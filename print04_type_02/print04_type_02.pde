@@ -4,8 +4,8 @@ import controlP5.*;
 
 ControlP5 cp5;
 PGraphics canvas;
-int canvas_width = 5100; //17x22 inches
-int canvas_height = 6100;
+int canvas_width = 4800; //17x22 inches
+int canvas_height = 5500;
 
 float ratioWidth = 1;
 float ratioHeight = 1;
@@ -45,16 +45,16 @@ void calculateResizeRatio()
  ---------------------------------------------------------------- */
 public void addControllers() {
   cp5 = new ControlP5(this);
-  cp5.addSlider("centerRad", 250, 150).linebreak();
+  cp5.addSlider("centerRad", 5, 125).linebreak();
   cp5.addSlider("strokeInside", minStroke, maxStroke).linebreak();
   cp5.addSlider("strokeCenter", minStroke, maxStroke).linebreak();
   cp5.addSlider("strokeOutside", minStroke, maxStroke).linebreak();
   cp5.addSlider("separation", minSep, maxSep).linebreak();
   cp5.addSlider("globalScale", 0.0, 3.0).linebreak();
+  cp5.addSlider("backgroundScale", 0.0, 20.0).linebreak();
   cp5.addSlider("cap", 1, 3).linebreak();
   cp5.addButton("randomize").linebreak();
   cp5.addButton("saveImg").linebreak();
-  cp5.addToggle("toggleT").linebreak();
 }
 
 void strokeInside(int val){
@@ -98,14 +98,14 @@ float[][][] letters = {
   {{140, 220}, {140, 220}, {60, 140, 220, 300}}, // E
   {{70,110}, {70,110}, {220, 320}}, // T
   {{270, 450}, {270, 420}, {35,60}}, // R
-  {{0, 360}, {0, 0}, {255, 285, 75, 105}}  // I
+  {{0, 360}, {0, 0}, {255, 285, 75, 105}},  // I
+    
 };
 
 float globalScale = 1.0;
-boolean toggleT = true;
-int minStroke = 25;
+int minStroke = 15;
 int maxStroke = 75;
-int minSep = 5;
+int minSep = 0;
 int maxSep = 75;
 int cap = 2;
 int separation = 30;
@@ -113,6 +113,8 @@ int centerRad = 50;
 int[] strokes = {
   60, 60, 60, 120
 };
+boolean bBackground = false;
+float backgroundScale = 5.0;
 
 // updates screen when called
 void drawScreen() {
@@ -135,7 +137,14 @@ void drawCanvas() {
   if( cap == 1 ) canvas.strokeCap(ROUND);
   else if( cap == 2 ) canvas.strokeCap(SQUARE);
   else if( cap == 3 ) canvas.strokeCap(PROJECT);
-      
+  
+  // individual background
+  canvas.pushMatrix();
+   if(backgroundScale > 0.0 ) drawBackground(canvas.width/2, canvas.height/2);
+  canvas.popMatrix();
+  // word
+      //canvas.blendMode(MULTIPLY);
+
   drawLetter( 0, canvas.width*0.20, canvas.height*0.25 );  // C
   drawLetter( 1, canvas.width*0.50, canvas.height*0.25 );  // O
   drawLetter( 2, canvas.width*0.80, canvas.height*0.25 );  // N
@@ -147,6 +156,7 @@ void drawCanvas() {
   drawLetter( 6, canvas.width*0.60, canvas.height*0.75 );  // I
   drawLetter( 0, canvas.width*0.80, canvas.height*0.75 );  // C
   
+  
   canvas.endDraw();
 }
 
@@ -156,10 +166,18 @@ void randomize() {
   strokes[1] = (int)random(minStroke,maxStroke);
   strokes[2] = (int)random(minStroke,maxStroke);
   separation = (int)random(minSep, maxSep);
-  centerRad = (int)random(5, 100);
+  centerRad = (int)random(5, 125);
+  
+  cp5.getController("strokeInside").setValue(strokes[0]);
+  cp5.getController("strokeCenter").setValue(strokes[1]);
+  cp5.getController("strokeOutside").setValue(strokes[2]);
+  cp5.getController("separation").setValue(separation);
+  cp5.getController("centerRad").setValue(centerRad);
+
 }
 
 void drawLetter( int i, float x, float y ) {
+  //if(bBackground)drawBackground(x,y);
   float rad = centerRad+strokes[0]/2; 
   
   canvas.pushMatrix();
@@ -172,11 +190,30 @@ void drawLetter( int i, float x, float y ) {
     // access every arc (pair of numbers) inside that circle
     for( int k=0; k<letters[i][j].length/2; k++ ){
       if ( letters[i][j][k] + letters[i][j][k+1] != 0 ) {
+        canvas.stroke(0, 250);
         canvas.arc(0, 0, rad, rad, radians(letters[i][j][k*2]), radians(letters[i][j][k*2+1]));
+        
       }
     }
     rad += strokes[j]/2 + strokes[j+1]/2 + separation;
   }
   canvas.popMatrix();
+}
+
+void drawBackground(float x, float y){
+    canvas.pushMatrix();
+    canvas.translate(x, y);
+    canvas.scale(backgroundScale);
+    //canvas.blendMode(MULTIPLY);
+    float rad = centerRad+strokes[0]/2; 
+
+    for( int k=0; k<3; k++ ){
+          canvas.strokeWeight( strokes[k] );
+          canvas.stroke(0, 7);
+          canvas.arc(0, 0, rad, rad, 0, 2*PI);
+          rad += strokes[k]/2 + strokes[k+1]/2 + separation;
+    }
+    canvas.popMatrix();
+
 }
 
