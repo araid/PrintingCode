@@ -5,6 +5,7 @@ application.macosx
 application.windows
 *.zip
 *.png
+*.tif
 *.tiff
 *.psd
 
