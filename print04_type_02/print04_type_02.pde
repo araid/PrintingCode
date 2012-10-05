@@ -54,7 +54,8 @@ public void addControllers() {
   cp5.addSlider("backgroundScale", 0.0, 20.0).linebreak();
   cp5.addSlider("cap", 1, 3).linebreak();
   cp5.addButton("randomize").linebreak();
-  cp5.addButton("saveImg").linebreak();
+  cp5.addButton("saveTest").linebreak();
+  cp5.addButton("saveImage").linebreak();
 }
 
 void strokeInside(int val){
@@ -67,41 +68,40 @@ void strokeOutside(int val){
   strokes[2] = val;
 }
 
-
 public void controlEvent(ControlEvent theEvent) {
   drawScreen();
 }
 
-void saveImg(int theValue ) {
-  saveImage();
+void saveTest(int theValue ) {
+  println("Saving test image");
+  canvas.save("image_" + year() + "_" + month()+ "_" + day() + "_" + hour() + "_" + minute() + "_" + second() + ".png");
+  println("Saved");
 }
 
-void keyPressed()
-{
-  if (key == 's') saveImage();
-  //if (key == 'h') cp5.h;
-}
-void saveImage() {
-  println("Saving Image");
+void saveImage(int theValue ) {
+  println("Saving high quality image");
   canvas.save("image_" + year() + "_" + month()+ "_" + day() + "_" + hour() + "_" + minute() + "_" + second() + ".tiff");
-  println("Saved Image");
+  println("Saved");
 }
 
+void keyPressed(){
+  if (key == 's') saveImage(0);
+}
 
 /* Design
  ---------------------------------------------------------------- */
-// start1, stop1, start2, stop2, start3, stop3 from inside to outside
+// [letters] [circles] [segments]  from inside to outside
 float[][][] letters = {
-  {{0, 0}, {40, 320}, {40, 320}}, // C
-  {{0, 0}, {0, 360}, {0, 360}}, // O  
-  {{0,225}, {10, 45, 190, 225}, {130, 225, 310, 405}}, // N
-  {{140, 220}, {140, 220}, {60, 140, 220, 300}}, // E
-  {{70,110}, {70,110}, {220, 320}}, // T
-  {{270, 450}, {270, 420}, {35,60}}, // R
-  {{0, 360}, {0, 0}, {255, 285, 75, 105}},  // I
-    
+  {{0, 0}, {40, 320}, {40, 320}},                       // C
+  {{0, 0}, {0, 360}, {0, 360}},                         // O  
+  {{0,225}, {10, 45, 190, 225}, {130, 225, 310, 405}},  // N
+  {{140, 220}, {140, 220}, {60, 140, 220, 300}},        // E
+  {{70,110}, {70,110}, {220, 320}},                     // T
+  {{270, 450}, {270, 420}, {35,60}},                    // R
+  {{0, 360}, {0, 0}, {255, 285, 75, 105}},              // I   
 };
 
+float backgroundScale = 5.0;
 float globalScale = 1.0;
 int minStroke = 15;
 int maxStroke = 75;
@@ -113,8 +113,6 @@ int centerRad = 50;
 int[] strokes = {
   60, 60, 60, 120
 };
-boolean bBackground = false;
-float backgroundScale = 5.0;
 
 // updates screen when called
 void drawScreen() {
@@ -138,13 +136,10 @@ void drawCanvas() {
   else if( cap == 2 ) canvas.strokeCap(SQUARE);
   else if( cap == 3 ) canvas.strokeCap(PROJECT);
   
-  // individual background
-  canvas.pushMatrix();
-   if(backgroundScale > 0.0 ) drawBackground(canvas.width/2, canvas.height/2);
-  canvas.popMatrix();
-  // word
-      //canvas.blendMode(MULTIPLY);
+  // circle background representation
+  if(backgroundScale > 0.0 ) drawBackground(canvas.width/2, canvas.height/2);
 
+  // word
   drawLetter( 0, canvas.width*0.20, canvas.height*0.25 );  // C
   drawLetter( 1, canvas.width*0.50, canvas.height*0.25 );  // O
   drawLetter( 2, canvas.width*0.80, canvas.height*0.25 );  // N
@@ -156,11 +151,10 @@ void drawCanvas() {
   drawLetter( 6, canvas.width*0.60, canvas.height*0.75 );  // I
   drawLetter( 0, canvas.width*0.80, canvas.height*0.75 );  // C
   
-  
   canvas.endDraw();
 }
 
-// randomizes random variables
+// randomizes typeface parameters
 void randomize() {
   strokes[0] = (int)random(minStroke,maxStroke);
   strokes[1] = (int)random(minStroke,maxStroke);
@@ -176,13 +170,14 @@ void randomize() {
 
 }
 
+// draws one letter in one position
 void drawLetter( int i, float x, float y ) {
-  //if(bBackground)drawBackground(x,y);
   float rad = centerRad+strokes[0]/2; 
   
   canvas.pushMatrix();
   canvas.translate(x, y);
   canvas.scale(globalScale);
+  
   // access every circle
   for (int j=0; j<letters[i].length; j++ ) {
     canvas.strokeWeight( strokes[j] );
@@ -192,7 +187,6 @@ void drawLetter( int i, float x, float y ) {
       if ( letters[i][j][k] + letters[i][j][k+1] != 0 ) {
         canvas.stroke(0, 250);
         canvas.arc(0, 0, rad, rad, radians(letters[i][j][k*2]), radians(letters[i][j][k*2+1]));
-        
       }
     }
     rad += strokes[j]/2 + strokes[j+1]/2 + separation;
@@ -200,13 +194,13 @@ void drawLetter( int i, float x, float y ) {
   canvas.popMatrix();
 }
 
+// draws base circles (can be used for general background or for indidivual letters)
 void drawBackground(float x, float y){
     canvas.pushMatrix();
     canvas.translate(x, y);
     canvas.scale(backgroundScale);
-    //canvas.blendMode(MULTIPLY);
+    
     float rad = centerRad+strokes[0]/2; 
-
     for( int k=0; k<3; k++ ){
           canvas.strokeWeight( strokes[k] );
           canvas.stroke(0, 7);
@@ -214,6 +208,5 @@ void drawBackground(float x, float y){
           rad += strokes[k]/2 + strokes[k+1]/2 + separation;
     }
     canvas.popMatrix();
-
 }
 
