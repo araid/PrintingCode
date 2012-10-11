@@ -148,7 +148,7 @@ void regenerate() {
   }
   
   // rotation angle
-  angle = random(-20.0, 20.0);
+  angle = round(random(-5, 5))*5;
   
 }
 
