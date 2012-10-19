@@ -4,7 +4,7 @@ import controlP5.*;
 
 ControlP5 cp5;
 PGraphics canvas;
-int canvas_width = 1659; //17x22 inches
+int canvas_width = 1650  ; //17x22 inches
 int canvas_height = 2400;
 
 float ratioWidth = 1;
@@ -18,7 +18,7 @@ float ratio = 1;
 void setup()
 { 
   size(1300, 800);
-  println(  PFont.list());
+  //println(  PFont.list());
 
   canvas = createGraphics(canvas_width, canvas_height); // need P3D if we want to blend
   calculateResizeRatio();
@@ -47,17 +47,20 @@ void calculateResizeRatio()
  ---------------------------------------------------------------- */
 public void addControllers() {
   cp5 = new ControlP5(this);
-  cp5.addSlider("numShapes", 1, 5).linebreak();
-  cp5.addSlider("numFlies", 1, 25).linebreak();
+  cp5.addSlider("numShapes", 1, 4).linebreak();
+  cp5.addSlider("numFlies", 0, 30).linebreak();
   cp5.addSlider("flySize", 0.0, 150.0).linebreak();
 
   cp5.addSlider("fontSize", 40.0, 400.0).linebreak();
   cp5.addSlider("leadingSize", 40.0, 400.0).linebreak();
   cp5.addButton("regenerate").linebreak();
   cp5.addButton("saveTest").linebreak();
-  cp5.addButton("saveImg").linebreak();
+  cp5.addButton("saveImage").linebreak();
   cp5.addToggle("bGrid");
   cp5.addToggle("bTitle");
+  cp5.addToggle("bFlies");
+  cp5.addToggle("bAlignLeft").linebreak();
+
 }
 
 public void controlEvent(ControlEvent theEvent) {
@@ -66,7 +69,7 @@ public void controlEvent(ControlEvent theEvent) {
 
 void saveTest(int theValue ) {
   println("Saving test image");
-  canvas.save("image_" + year() + "_" + month()+ "_" + day() + "_" + hour() + "_" + minute() + "_" + second() + ".png");
+  canvas.save("test_" + year() + "_" + month()+ "_" + day() + "_" + hour() + "_" + minute() + "_" + second() + ".png");
   println("Saved");
 }
 
@@ -88,6 +91,7 @@ void keyPressed()
 boolean bGrid = false;
 boolean bTitle = false;
 boolean bFlies = true;
+boolean bAlignLeft = true;
 int numShapes = 4;
 int numFlies = 6;
 float angle = 15.0;
@@ -103,9 +107,11 @@ ModularGrid rowGrid;
 ModularGrid diaGrid;
 Module[] rowModules;
 Module[] diaModules;
+PShape flyShape;
 
 // regenerates random variables
 void regenerate() {
+  flyShape = loadShape("fly.svg");
   rowGrid = new ModularGrid(1, 12, 30, 0, 30, canvas.width, canvas.height);
   diaGrid = new ModularGrid(4, 6, 30, 0, 0, canvas.width, canvas.height);
   rowModules = new Module[3];
@@ -122,9 +128,9 @@ void regenerate() {
   // chose diagonal modules, 1 is text, the others are shapes
   diaModules[0] = diaGrid.getRandomModule(3, 3, false); //book title
   diaModules[1] = diaGrid.getRandomModule(3, 3, false);  
-  diaModules[2] = diaGrid.getRandomModule(3, 3, false); 
-  diaModules[3] = diaGrid.getRandomModule(3, 3, false); 
-  diaModules[4] = diaGrid.getRandomModule(3, 3, false); 
+  diaModules[2] = diaGrid.getRandomModule(3, 2, false); 
+  diaModules[3] = diaGrid.getRandomModule(3, 2, false); 
+  diaModules[4] = diaGrid.getRandomModule(3, 1, false); 
   
   // create palette
   colorMode(HSB, 360, 100, 100 );
@@ -139,13 +145,15 @@ void regenerate() {
     //b += 20;
   }
   
-  // create flies aligned with diagonal grid
-  flies = new PVector[25];
+  // create flies aligned with diagonal grid - or not
+  flies = new PVector[30];
   for( int i=0; i<flies.length; i++ ){
-    float offset = 25;
-    Module m = diaGrid.modules[floor(random(diaGrid.cols))][floor(random(diaGrid.rows))];
-    flies[i] = new PVector(m.x + random(-offset, offset), m.y + random(-offset, offset), random(2*PI));
+    //float offset = 25;
+    //Module m = diaGrid.modules[floor(random(diaGrid.cols))][floor(random(diaGrid.rows))];
+    //flies[i] = new PVector(m.x + random(-offset, offset), m.y + random(-offset, offset), random(2*PI));
+    flies[i] = new PVector(random(canvas.width), random(canvas.height), random(2*PI));
   }
+  numFlies = (int) random(10);
   
   // rotation angle
   angle = round(random(-5, 5))*5;
@@ -193,7 +201,8 @@ void drawCanvas() {
         }
         canvas.textFont( font );
         canvas.textLeading(leadingSize);
-        canvas.textAlign(LEFT);
+        if(bAlignLeft) canvas.textAlign(LEFT);
+        else canvas.textAlign(RIGHT);
         canvas.text(title, m.x, m.y, m.w, m.h);
       }   
     }
@@ -218,10 +227,9 @@ void drawCanvas() {
   }
 
   // draw flies
-  if( bFlies ){
     for( int i=0; i<numFlies; i++ ){
       drawFly(flies[i]);
-    }
+    
   }
 
   // SHOW GRID
@@ -247,8 +255,9 @@ void drawFly( PVector fly ){
   
   canvas.translate(fly.x, fly.y);
   canvas.rotate(fly.z);
-  canvas.rect(0, 0, flySize, flySize);
-  
+  if(bFlies) canvas.shape(flyShape, -flySize, -flySize, flySize*2, flySize*2);
+  else canvas.rect(0, 0, flySize, flySize);
+
   canvas.popMatrix();
   canvas.rectMode(CORNER);
 
