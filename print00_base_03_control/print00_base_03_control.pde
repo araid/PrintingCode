@@ -1,82 +1,57 @@
-/*  Properties
+/*  App config
  _________________________________________________________________ */
 import controlP5.*;
 
-ControlP5 cp5;
-PGraphics canvas;
 int canvas_width = 5100; //17x22 inches
 int canvas_height = 5100;
-
-float ratioWidth = 1;
-float ratioHeight = 1;
 float ratio = 1;
+ControlP5 cp5;
+PGraphics canvas;
 
-
-/*  Setup
- _________________________________________________________________ */
-
-void setup()
-{ 
+void setup(){ 
   size(1300, 800);
   canvas = createGraphics(canvas_width, canvas_height);
-  calculateResizeRatio();
+  ratio = min(float) width / (float) canvas.width, (float) height / (float) canvas.height);  
   addControllers();
-
   regenerate();
   drawScreen();
 }
 
-void draw() {
-  // needs to be here looping for ControlP5
-}
-
-/*  Calculate resizing
- _________________________________________________________________ */
-void calculateResizeRatio()
-{
-  ratioWidth = (float) width / (float) canvas.width;
-  ratioHeight = (float) height / (float) canvas.height;
-
-  if (ratioWidth < ratioHeight)  ratio = ratioWidth;
-  else                          ratio = ratioHeight;
-}
+void draw() {}
 
 /* Interface and event management
  ---------------------------------------------------------------- */
 public void addControllers() {
   cp5 = new ControlP5(this);
-  cp5.addSlider("sliderS", 0, 25).linebreak();
+  cp5.addSlider("radius", 0, 1000).linebreak();
+  cp5.addToggle("bCircle").linebreak();
 
   cp5.addButton("regenerate").linebreak();
-  cp5.addButton("saveImg").linebreak();
-  cp5.addToggle("toggleT").linebreak();
+  cp5.addButton("saveTest").linebreak();
+  cp5.addButton("saveImage").linebreak();
 }
 
 public void controlEvent(ControlEvent theEvent) {
   drawScreen();
 }
 
-void saveImg(int theValue ) {
-  saveImage();
+void saveTest(int theValue ) {
+  println("Saving test image");
+  canvas.save("test_" + year() + "_" + month()+ "_" + day() + "_" + hour() + "_" + minute() + "_" + second() + ".png");
+  println("Saved");
 }
 
-void keyPressed()
-{
-  if (key == 's') saveImage();
-  //if (key == 'h') cp5.h;
-}
-void saveImage() {
-  println("Saving Image");
+void saveImage(int theValue ) {
+  println("Saving high quality image");
   canvas.save("image_" + year() + "_" + month()+ "_" + day() + "_" + hour() + "_" + minute() + "_" + second() + ".tiff");
-  println("Saved Image");
+  println("Saved");
 }
-
 
 /* Design
  ---------------------------------------------------------------- */
 // design vars
-int sliderA = 3;
-boolean toggleT = true;
+int radius = 300;
+boolean bCircle = true;
 
 // updates screen when called
 void drawScreen() {
@@ -95,7 +70,7 @@ void drawCanvas() {
 
   // draw stuff
   canvas.fill(255,0,0);
-  canvas.ellipse(canvas.width/2, canvas.height/2, canvas.width/2, canvas.width/2);
+  canvas.ellipse(canvas.width/2, canvas.height/2, radius, radius);
   canvas.endDraw();
 }
 
@@ -103,5 +78,3 @@ void drawCanvas() {
 void regenerate() {
   
 }
-
-
