@@ -5,8 +5,8 @@ import geomerative.*;
 
 ControlP5 cp5;
 PGraphics canvas;
-int canvas_width = 450; //15x15 inches
-int canvas_height = 450;
+int canvas_width = 4500; //15x15 inches
+int canvas_height = 4500;
 
 float ratioWidth = 1;
 float ratioHeight = 1;
@@ -48,8 +48,8 @@ void calculateResizeRatio()
  ---------------------------------------------------------------- */
 public void addControllers() {
   cp5 = new ControlP5(this);
-  cp5.addSlider("segmentLength", 0.0, 20.0).linebreak();
-  cp5.addSlider("dispersion", 0.0, 5.0).linebreak();
+  cp5.addSlider("segmentLength", 0.0, 200.0).linebreak();
+  cp5.addSlider("dispersion", 0.0, 50.0).linebreak();
   cp5.addButton("regenerate").linebreak();
   cp5.addButton("saveTest").linebreak();
   cp5.addButton("saveImage").linebreak();
@@ -79,7 +79,7 @@ void saveImage(int theValue ) {
  ---------------------------------------------------------------- */
 // design vars
 boolean debug = true;
-boolean white = false;
+boolean white = true;
 int numLines = 20;
 int numSegments = 20;
 float dispersion = 0.3;
@@ -94,8 +94,8 @@ RPoint[] fontpnts;
 // regenerates random variables
 void regenerate() {
   // Font setup
-  font = new RFont("Arial Bold Italic.ttf", 68, RFont.CENTER);
-  RCommand.setSegmentLength(8);
+  font = new RFont("Arial Bold Italic.ttf", 680, RFont.CENTER);
+  RCommand.setSegmentLength(100);
 
   // tell the library that the points should have same distance
   //RCommand.setSegmentator(RCommand.UNIFORMLENGTH);
@@ -179,11 +179,12 @@ void drawCanvas() {
   // attractor
   canvas.fill(200);
       canvas.noStroke();
-  if (debug) canvas.ellipse(attractor.x, attractor.y, 5, 5);
+  if (debug) canvas.ellipse(attractor.x, attractor.y, 50, 50);
 
   // the lines
   canvas.noFill();
   canvas.stroke(0);
+  canvas.strokeWeight(10);
   for (int i=0; i<numLines; i++) {
 
     canvas.beginShape();
@@ -206,7 +207,7 @@ void drawCanvas() {
   if(debug) for(int i=0; i<fontpnts.length; i++){
     canvas.noStroke();
     canvas.fill(200);
-    canvas.ellipse(fontpnts[i].x, fontpnts[i].y, 2, 2);
+    canvas.ellipse(fontpnts[i].x, fontpnts[i].y, 20, 20);
 
   }
   canvas.popMatrix();
