@@ -18,7 +18,7 @@ Print 03: Color
 ---------------
 Assignment: create an abstract representation of your identity. This is an exercise in writing code that is generative, but within constraints.
 
-![Abstract color](img/print03_grid.jpg)
+![Abstract color](araid.github.com/PrintingCode/img/print03_grid.jpg)
 
 
 Print 04: Typography
@@ -30,7 +30,7 @@ Print 05: Grids
 Assignment: Create your own grid system and use it Processing sketch that outputs a poster with elements placed via a grid system.
 
 I designed a generative book cover for The Lord of the Flies. A different print for every reader.
-![The Lord of the Flies](img/print05_grid.jpg)
+![The Lord of the Flies](araid.github.com/PrintingCode/img/print05_grid.jpg)
 
 Print 06: Logo
 --------------
