@@ -3,7 +3,7 @@ static final int ORIENTATION_RIGHT = 1;
 
 void setup()
 {
-  size(800, 800);
+  size(2400, 2400);
   smooth();
   //colorMode(HSB, 360, 100, 100);
   background(255);
@@ -17,7 +17,7 @@ void draw() {
 
 void drawSquare(float x, float y, float siz, float orientation, color c1, color c2)
 {
-  if (siz > 10) {
+  if (siz > 30) {
     //noStroke();
     //stroke(10);
     noFill();
@@ -49,4 +49,10 @@ float getRandomOrientation() {
 int getRandomColor(){
   return color(random(255), random(255), random(255));
 }
-
+void keyPressed(){
+  if(key == ' '){
+      background(128);
+    drawSquare(width/2, width/2, width, getRandomOrientation(), getRandomColor(), getRandomColor());
+  }
+  else if (key == 's') saveFrame("img-######.tif");
+}
