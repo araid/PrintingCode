@@ -1,6 +1,6 @@
 PrintingCode
 ============
-This is a collection of assignments for [http://www.runemadsen.com/printing-code-2012](Printing Code), a class taught by [http://runemadsen.com/](Rune Madsen) at [http://itp.nyu.edu](NYU ITP) during Fall 2012
+This is a collection of assignments for [Printing Code](http://www.runemadsen.com/printing-code-2012), a class taught by [Rune Madsen](http://runemadsen.com/) at [NYU ITP](http://itp.nyu.edu) during Fall 2012
 
 Print 00
 --------
@@ -18,6 +18,9 @@ Print 03: Color
 ---------------
 Assignment: create an abstract representation of your identity. This is an exercise in writing code that is generative, but within constraints.
 
+![Abstract color](img/print03_grid.jpg)
+
+
 Print 04: Typography
 --------------------
 Assignment: Pick a word and make a typeface around it. The important thing is that you draw the letters using some kind of rule-based logic.
@@ -25,6 +28,9 @@ Assignment: Pick a word and make a typeface around it. The important thing is th
 Print 05: Grids
 ---------------
 Assignment: Create your own grid system and use it Processing sketch that outputs a poster with elements placed via a grid system.
+
+I designed a generative book cover for The Lord of the Flies. A different print for every reader.
+![The Lord of the Flies](img/print05_grid.jpg)
 
 Print 06: Logo
 --------------
